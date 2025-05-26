@@ -1,0 +1,49 @@
+name: flutter_pos
+description: "Simple Point of sales Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+
+  #features
+  home:
+    path: features/home
+  order:
+    path: features/order
+  auth:
+    path: features/auth
+
+  #domain
+  pos:
+    path: domain/pos
+
+  #resources
+  resources:
+    path: resources/resources
+
+  #shared libraries
+  common:
+    path: shared_libraries/common
+  core:
+    path: shared_libraries/core
+  dependencies:
+    path: shared_libraries/dependencies
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.3.3
+  json_serializable: ^6.8.0
+
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

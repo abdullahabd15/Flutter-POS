@@ -1,0 +1,37 @@
+name: home
+description: "A new Flutter package project."
+version: 0.0.1
+publish_to: 'none'
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+
+  #domain
+  pos:
+    path: ../../domain/pos
+
+  #resources
+  resources:
+    path: ../../resources/resources
+
+  #shared libraries
+  common:
+    path: ../../shared_libraries/common
+  core:
+    path: ../../shared_libraries/core
+  dependencies:
+    path: ../../shared_libraries/dependencies
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
