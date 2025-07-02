@@ -1,8 +1,11 @@
+import 'package:common/error/api_exception.dart';
 import 'package:common/error/failure_response.dart';
+import 'package:core/network/api_response.dart';
 import 'package:dependencies/dartz/dartz.dart';
 import 'package:pos/data/datasources/pos_data_source.dart';
 import 'package:pos/data/models/cart.dart';
 import 'package:pos/data/models/checkout_body.dart';
+import 'package:pos/data/models/login_result.dart';
 import 'package:pos/data/models/product.dart';
 import 'package:pos/data/models/product_category.dart';
 import 'package:pos/data/models/transaction.dart';
@@ -129,6 +132,36 @@ class PosRepositoryImpl extends PosRepository {
       );
       if (result.success == true && result.data != null) {
         return Right(result.data!);
+      } else {
+        return const Left(FailureResponse(message: 'Something went wrong'));
+      }
+    } catch (e) {
+      return Left(FailureResponse(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<FailureResponse, LoginResult>> login(String username, String password) async {
+    try {
+      final result = await posDataSource.login(username, password);
+      if (result.success == true) {
+        return Right(result);
+      } else {
+        return const Left(FailureResponse(message: 'Something went wrong'));
+      }
+    } on ApiException catch (e) {
+      return Left(FailureResponse(message: e.message));
+    } catch (e) {
+      return Left(FailureResponse(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<FailureResponse, ApiResponse<Object>>> logout() async {
+    try {
+      final result = await posDataSource.logout();
+      if (result.success == true && result.data != null) {
+        return Right(result);
       } else {
         return const Left(FailureResponse(message: 'Something went wrong'));
       }

@@ -24,6 +24,7 @@ class DioHandler {
   Map<String, dynamic> _defaultHeader() {
     Map<String, String> headers = {};
     headers['Content-Type'] = 'application/json';
+    headers['Accept'] = 'application/json';
     return headers;
   }
 }

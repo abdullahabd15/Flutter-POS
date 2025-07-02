@@ -1,4 +1,5 @@
 import 'package:dependencies/intl/intl.dart';
+import 'package:dependencies/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 extension DoubleExtension on double? {
@@ -17,5 +18,15 @@ extension DoubleExtension on double? {
     } catch (e) {
       return '${NumberFormat.simpleCurrency(locale: locale.toString()).currencySymbol}0';
     }
+  }
+}
+
+extension SharedPreferencesExtension on SharedPreferences {
+  Future<void> saveToken(String value) async {
+    await setString('token', value);
+  }
+
+  Future<String?> getToken() async {
+    return getString('token');
   }
 }

@@ -1,11 +1,13 @@
-import 'package:auth/presentation/ui/forgot_password/forgot_password_screen.dart';
+import 'package:auth/presentation/cubit/login/login_cubit.dart';
 import 'package:auth/presentation/ui/login/login_screen.dart';
-import 'package:auth/presentation/ui/register/register_screen.dart';
+import 'package:common/extension/extension.dart';
 import 'package:dependencies/bloc/bloc.dart';
+import 'package:dependencies/get_it/get_it.dart';
 import 'package:dependencies/go_router/go_router.dart';
 import 'package:dependencies/google_fonts/google_fonts.dart';
 import 'package:dependencies/hydrated_bloc/hydrated_bloc.dart';
 import 'package:dependencies/path_provider/path_provider.dart';
+import 'package:dependencies/shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/cubit/main_cubit.dart';
@@ -32,16 +34,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => MainCubit(),
-      child: BlocBuilder<MainCubit, MainState>(builder: (context, state) {
-        return MaterialApp.router(
-          theme: _themeData,
-          routerConfig: _router(state),
-          debugShowCheckedModeBanner: false,
+    return FutureBuilder(
+      future: _isLoggedIn(),
+      builder: (context, snapshot) {
+        return BlocProvider(
+          create: (_) => MainCubit(isLoggedIn: snapshot.data == true)
+            ..checkAndSyncLoginStatus(),
+          child: BlocBuilder<MainCubit, MainState>(
+            builder: (context, state) {
+              return MaterialApp.router(
+                theme: _themeData,
+                routerConfig: _router(state),
+                debugShowCheckedModeBanner: false,
+              );
+            },
+          ),
         );
-      }),
+      },
     );
+  }
+
+  Future<bool> _isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = await prefs.getToken();
+    return token != null && token.isNotEmpty ? true : false;
   }
 
   GoRouter _router(MainState state) => GoRouter(
@@ -50,19 +66,10 @@ class MyApp extends StatelessWidget {
           GoRoute(
             path: Routes.login.route,
             pageBuilder: (context, state) => NoTransitionPage(
-              child: LoginScreen(),
-            ),
-          ),
-          GoRoute(
-            path: Routes.register.route,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: RegisterScreen(),
-            ),
-          ),
-          GoRoute(
-            path: Routes.forgotPassword.route,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ForgotPasswordScreen(),
+              child: BlocProvider(
+                create: (_) => LoginCubit(loginUseCase: sl()),
+                child: LoginScreen(),
+              ),
             ),
           ),
           GoRoute(

@@ -1,6 +1,8 @@
 import 'package:common/error/failure_response.dart';
+import 'package:core/network/api_response.dart';
 import 'package:dependencies/dartz/dartz.dart';
 import 'package:pos/data/models/checkout_body.dart';
+import 'package:pos/data/models/login_result.dart';
 import 'package:pos/data/models/transaction.dart';
 
 import '../../data/models/cart.dart';
@@ -27,4 +29,8 @@ abstract class PosRepository {
     String? fromDate,
     String? toDate,
   });
+
+  Future<Either<FailureResponse, LoginResult>> login(String username, String password);
+
+  Future<Either<FailureResponse, ApiResponse<Object>>> logout();
 }

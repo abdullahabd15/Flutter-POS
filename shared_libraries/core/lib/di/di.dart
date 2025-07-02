@@ -1,8 +1,7 @@
 import 'package:core/network/api_constant.dart';
+import 'package:core/network/dio_handler.dart';
 import 'package:dependencies/dio/dio.dart';
 import 'package:dependencies/get_it/get_it.dart';
-
-import '../network/dio_handler.dart';
 
 class CoreModule {
   CoreModule() {

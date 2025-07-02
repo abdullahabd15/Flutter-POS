@@ -1,8 +1,10 @@
 import 'package:core/network/api_response.dart';
+import 'package:common/error/api_exception.dart';
 import 'package:dependencies/dio/dio.dart';
 import 'package:pos/data/models/cart.dart';
 import 'package:pos/data/models/cart_body.dart';
 import 'package:pos/data/models/checkout_body.dart';
+import 'package:pos/data/models/login_result.dart';
 import 'package:pos/data/models/product.dart';
 import 'package:pos/data/models/product_category.dart';
 import 'package:pos/data/models/transaction.dart';
@@ -26,6 +28,10 @@ abstract class PosDataSource {
     String? fromDate,
     String? toDate,
   });
+
+  Future<LoginResult> login(String username, String password);
+
+  Future<ApiResponse<Object>> logout();
 }
 
 class PosDataSourceImpl extends PosDataSource {
@@ -145,6 +151,41 @@ class PosDataSourceImpl extends PosDataSource {
         (json) => (json as List<dynamic>)
             .map((e) => Transaction.fromJson(e as Map<String, dynamic>))
             .toList(),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<LoginResult> login(String username, String password) async {
+    try {
+      final response = await dio.post(
+        '/login',
+        data: {
+          'username': username,
+          'password': password,
+        },
+      );
+      return LoginResult.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      throw ApiException(message: e.response?.data['message']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ApiResponse<Object>> logout() async {
+    try {
+      final response = await dio.post(
+        '/logout',
+      );
+      return ApiResponse.fromJson(
+        response.data,
+        (json) => json as Map<String, dynamic>,
       );
     } catch (e) {
       rethrow;

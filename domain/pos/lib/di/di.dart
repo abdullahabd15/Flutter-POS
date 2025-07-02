@@ -10,6 +10,8 @@ import 'package:pos/domain/usecase/fetch_product_categories_use_case.dart';
 import 'package:pos/domain/usecase/fetch_products_use_case.dart';
 import 'package:pos/domain/usecase/fetch_shopping_cart_use_case.dart';
 import 'package:pos/domain/usecase/fetch_transaction_history_use_case.dart';
+import 'package:pos/domain/usecase/login_use_case.dart';
+import 'package:pos/domain/usecase/logout_use_case.dart';
 
 class PosModule {
   PosModule() {
@@ -32,5 +34,7 @@ class PosModule {
     sl.registerLazySingleton(() => CheckoutUseCase(repository: sl()));
     sl.registerLazySingleton(
         () => FetchTransactionHistoryUseCase(repository: sl()));
+    sl.registerLazySingleton(() => LoginUseCase(repository: sl()));
+    sl.registerLazySingleton(() => LogoutUseCase(repository: sl()));
   }
 }
