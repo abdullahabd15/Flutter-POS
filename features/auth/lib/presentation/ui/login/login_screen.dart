@@ -20,30 +20,6 @@ class LoginScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildLoadingDialog(BuildContext context, String message) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          SizedBox(
-            width: 48,
-            height: 48,
-            child: CircularProgressIndicator(
-              strokeWidth: 4.0,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            message,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,24 +27,8 @@ class LoginScreen extends StatelessWidget {
         listener: (context, state) {
           final router = GoRouter.of(context);
           if (state.status == LoginStatus.success) {
-            // Dismiss loading dialog if it's showing
-            if (Navigator.of(context, rootNavigator: true).canPop()) {
-              Navigator.of(context, rootNavigator: true).pop();
-            }
             router.go(Routes.home.route);
-          } else if (state.status == LoginStatus.loading) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (BuildContext dialogContext) {
-                return _buildLoadingDialog(context, "Please wait...");
-              },
-            );
           } else if (state.status == LoginStatus.failure) {
-            // Dismiss loading dialog if it's showing
-            if (Navigator.of(context, rootNavigator: true).canPop()) {
-              Navigator.of(context, rootNavigator: true).pop();
-            }
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.errorMessage ?? 'Login failed'),
@@ -186,8 +146,10 @@ class LoginScreen extends StatelessWidget {
                                 width: double.infinity,
                                 height: 50,
                                 child: ElevatedButton(
-                                  onPressed: () => _handleLogin(context),
-                                  // Panggil _handleLogin
+                                  onPressed: () =>
+                                      loginState.status == LoginStatus.loading
+                                          ? null
+                                          : _handleLogin(context),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue[700],
                                     foregroundColor: Colors.white,
@@ -196,13 +158,18 @@ class LoginScreen extends StatelessWidget {
                                     ),
                                     elevation: 4,
                                   ),
-                                  child: Text(
-                                    'Login',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                                  child:
+                                      loginState.status == LoginStatus.loading
+                                          ? CircularProgressIndicator(
+                                              color: Colors.white,
+                                            )
+                                          : Text(
+                                              'Login',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                 ),
                               ),
                             ],

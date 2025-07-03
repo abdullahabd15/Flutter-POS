@@ -14,7 +14,6 @@ import 'package:flutter_pos/cubit/main_cubit.dart';
 import 'package:flutter_pos/cubit/main_state.dart';
 import 'package:flutter_pos/di/di.dart';
 import 'package:flutter_pos/ui/main_container_screen.dart';
-import 'package:home/presentation/ui/home/home_screen.dart';
 import 'package:order/presentation/ui/order_history/transactions_history_screen.dart';
 import 'package:resources/enum/routes.dart';
 
@@ -75,27 +74,25 @@ class MyApp extends StatelessWidget {
           GoRoute(
             path: Routes.home.route,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: MainContainerScreen(
-                child: HomeScreen(),
-              ),
+              child: MainContainerScreen(),
             ),
           ),
-          GoRoute(
-            path: Routes.transactions.route,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: MainContainerScreen(
-                child: TransactionsHistoryScreen(),
-              ),
-            ),
-          ),
-          GoRoute(
-            path: Routes.report.route,
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: MainContainerScreen(
-                child: Container(),
-              ),
-            ),
-          ),
+          // GoRoute(
+          //   path: Routes.transactions.route,
+          //   pageBuilder: (context, state) => const NoTransitionPage(
+          //     child: MainContainerScreen(
+          //       child: TransactionsHistoryScreen(),
+          //     ),
+          //   ),
+          // ),
+          // GoRoute(
+          //   path: Routes.report.route,
+          //   pageBuilder: (context, state) => NoTransitionPage(
+          //     child: MainContainerScreen(
+          //       child: Container(),
+          //     ),
+          //   ),
+          // ),
         ],
       );
 

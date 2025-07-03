@@ -1,8 +1,16 @@
 import 'package:common/extension/extension.dart';
 import 'package:dependencies/hydrated_bloc/hydrated_bloc.dart';
 import 'package:dependencies/shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_pos/cubit/main_state.dart';
 import 'package:resources/enum/routes.dart';
+
+List<SideMenu> sideMenu = [
+  SideMenu(index: 0, title: 'Home', icon: Icons.home),
+  SideMenu(index: 1, title: 'Orders', icon: Icons.receipt_long),
+  SideMenu(index: 2, title: 'History', icon: Icons.history),
+  SideMenu(index: 3, title: 'Products Management', icon: Icons.fastfood),
+];
 
 class MainCubit extends HydratedCubit<MainState> {
   final bool isLoggedIn;
@@ -11,16 +19,19 @@ class MainCubit extends HydratedCubit<MainState> {
       : super(
           MainState(
             currentRoute: isLoggedIn ? Routes.home : Routes.login,
-            selectedItemDrawer:
-                isLoggedIn ? Routes.home.route : Routes.login.route,
+            sideMenu: sideMenu,
+            selectedIndex: 0,
           ),
         );
+
+  void setSelectedIndex(int index) {
+    emit(state.copyWith(selectedIndex: index));
+  }
 
   void setCurrentRoute(String route) {
     emit(
       state.copyWith(
         currentRoute: Routes.values.firstWhere((e) => e.route == route),
-        selectedItemDrawer: route,
       ),
     );
   }
@@ -33,28 +44,24 @@ class MainCubit extends HydratedCubit<MainState> {
       state.copyWith(
         isLoggedIn: loggedIn,
         currentRoute: loggedIn ? Routes.home : Routes.login,
-        selectedItemDrawer: loggedIn ? Routes.home.route : Routes.login.route,
       ),
     );
   }
 
   @override
   MainState? fromJson(Map<String, dynamic> json) {
-    final selectedItemDrawer = json['selectedItemDrawer'];
-    final currentRoute = json['currentRoute'] ??
-        Routes.values.firstWhere((e) => e.route == selectedItemDrawer);
-    final isLoggedIn = json['isLoggedIn'];
+    final selectedIndex = json['selectedIndex'];
+    final currentRoute = json['currentRoute'];
     return MainState(
       currentRoute: currentRoute,
-      selectedItemDrawer: selectedItemDrawer,
-      isLoggedIn: isLoggedIn,
+      sideMenu: sideMenu,
+      selectedIndex: selectedIndex,
     );
   }
 
   @override
   Map<String, dynamic>? toJson(MainState state) => {
-        'selectedItemDrawer': state.selectedItemDrawer,
+        'selectedIndex': state.selectedIndex,
         'currentRoute': state.currentRoute.route,
-        'isLoggedIn': state.isLoggedIn,
       };
 }

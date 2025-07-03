@@ -58,14 +58,14 @@ packages:
     source: hosted
     version: "1.19.1"
   common:
-    dependency: "direct main"
+    dependency: "direct home"
     description:
       path: "../../shared_libraries/common"
       relative: true
     source: path
     version: "0.0.1"
   core:
-    dependency: "direct main"
+    dependency: "direct home"
     description:
       path: "../../shared_libraries/core"
       relative: true
@@ -80,7 +80,7 @@ packages:
     source: hosted
     version: "3.0.6"
   cupertino_icons:
-    dependency: "direct main"
+    dependency: "direct home"
     description:
       name: cupertino_icons
       sha256: ba631d1c7f7bef6b729a622b7b752645a2d076dba9976925b8f25725a30e1ee6
@@ -104,7 +104,7 @@ packages:
     source: hosted
     version: "2.5.18"
   dependencies:
-    dependency: "direct main"
+    dependency: "direct home"
     description:
       path: "../../shared_libraries/dependencies"
       relative: true
@@ -151,7 +151,7 @@ packages:
     source: hosted
     version: "2.1.3"
   flutter:
-    dependency: "direct main"
+    dependency: "direct home"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -430,7 +430,7 @@ packages:
     source: hosted
     version: "2.1.8"
   pos:
-    dependency: "direct main"
+    dependency: "direct home"
     description:
       path: "../../domain/pos"
       relative: true
@@ -445,7 +445,7 @@ packages:
     source: hosted
     version: "6.1.2"
   resources:
-    dependency: "direct main"
+    dependency: "direct home"
     description:
       path: "../../resources/resources"
       relative: true

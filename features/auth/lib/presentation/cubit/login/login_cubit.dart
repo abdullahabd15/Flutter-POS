@@ -15,8 +15,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void login(String username, String password) async {
-    final result = await loginUseCase.execute(username, password);
     emit(state.copyWith(status: LoginStatus.loading));
+    final result = await loginUseCase.execute(username, password);
     result.fold(
       (failure) => emit(
         state.copyWith(
