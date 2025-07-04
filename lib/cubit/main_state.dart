@@ -6,11 +6,13 @@ class MainState extends Equatable {
   final Routes currentRoute;
   final List<SideMenu> sideMenu;
   final int selectedIndex;
+  final bool isLoggedIn;
 
   const MainState({
     required this.currentRoute,
     required this.sideMenu,
     required this.selectedIndex,
+    required this.isLoggedIn,
   });
 
   MainState copyWith({
@@ -23,6 +25,7 @@ class MainState extends Equatable {
       currentRoute: currentRoute ?? this.currentRoute,
       sideMenu: sideMenu ?? this.sideMenu,
       selectedIndex: selectedIndex ?? this.selectedIndex,
+      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
     );
   }
 
@@ -31,6 +34,7 @@ class MainState extends Equatable {
         currentRoute,
         sideMenu,
         selectedIndex,
+        isLoggedIn,
       ];
 }
 

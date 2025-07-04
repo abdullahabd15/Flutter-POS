@@ -14,7 +14,6 @@ import 'package:flutter_pos/cubit/main_cubit.dart';
 import 'package:flutter_pos/cubit/main_state.dart';
 import 'package:flutter_pos/di/di.dart';
 import 'package:flutter_pos/ui/main_container_screen.dart';
-import 'package:order/presentation/ui/order_history/transactions_history_screen.dart';
 import 'package:resources/enum/routes.dart';
 
 void main() async {
@@ -67,7 +66,14 @@ class MyApp extends StatelessWidget {
             pageBuilder: (context, state) => NoTransitionPage(
               child: BlocProvider(
                 create: (_) => LoginCubit(loginUseCase: sl()),
-                child: LoginScreen(),
+                child: LoginScreen(
+                  onLoginSuccess: () {
+                    context
+                        .read<MainCubit>()
+                        .setCurrentRoute(Routes.home.route);
+                    GoRouter.of(context).go(Routes.home.route);
+                  },
+                ),
               ),
             ),
           ),
@@ -77,27 +83,11 @@ class MyApp extends StatelessWidget {
               child: MainContainerScreen(),
             ),
           ),
-          // GoRoute(
-          //   path: Routes.transactions.route,
-          //   pageBuilder: (context, state) => const NoTransitionPage(
-          //     child: MainContainerScreen(
-          //       child: TransactionsHistoryScreen(),
-          //     ),
-          //   ),
-          // ),
-          // GoRoute(
-          //   path: Routes.report.route,
-          //   pageBuilder: (context, state) => NoTransitionPage(
-          //     child: MainContainerScreen(
-          //       child: Container(),
-          //     ),
-          //   ),
-          // ),
         ],
       );
 
   final ThemeData _themeData = ThemeData(
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
     useMaterial3: true,
     textTheme: TextTheme(
       bodyMedium: GoogleFonts.urbanist(),

@@ -1,16 +1,15 @@
 import 'package:auth/presentation/cubit/login/login_cubit.dart';
 import 'package:auth/presentation/cubit/login/login_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
-import 'package:dependencies/go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import 'package:resources/enum/routes.dart';
 
 class LoginScreen extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final Function onLoginSuccess;
 
-  LoginScreen({super.key});
+  LoginScreen({required this.onLoginSuccess, super.key});
 
   void _handleLogin(BuildContext context) {
     if (_formKey.currentState!.validate()) {
@@ -25,15 +24,8 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: BlocListener<LoginCubit, LoginState>(
         listener: (context, state) {
-          final router = GoRouter.of(context);
           if (state.status == LoginStatus.success) {
-            router.go(Routes.home.route);
-          } else if (state.status == LoginStatus.failure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage ?? 'Login failed'),
-              ),
-            );
+            onLoginSuccess();
           }
         },
         child: BlocBuilder<LoginCubit, LoginState>(
@@ -141,7 +133,17 @@ class LoginScreen extends StatelessWidget {
                                   return null;
                                 },
                               ),
-                              SizedBox(height: 32),
+                              SizedBox(height: 12),
+                              loginState.status == LoginStatus.failure
+                                  ? Flexible(
+                                      child: Text(
+                                        loginState.errorMessage ??
+                                            'Login Failed.',
+                                        style: TextStyle(color: Colors.red[800]),
+                                      ),
+                                    )
+                                  : Text(''),
+                              SizedBox(height: 24),
                               SizedBox(
                                 width: double.infinity,
                                 height: 50,

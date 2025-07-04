@@ -21,6 +21,7 @@ class MainCubit extends HydratedCubit<MainState> {
             currentRoute: isLoggedIn ? Routes.home : Routes.login,
             sideMenu: sideMenu,
             selectedIndex: 0,
+            isLoggedIn: isLoggedIn,
           ),
         );
 
@@ -52,10 +53,12 @@ class MainCubit extends HydratedCubit<MainState> {
   MainState? fromJson(Map<String, dynamic> json) {
     final selectedIndex = json['selectedIndex'];
     final currentRoute = json['currentRoute'];
+    final isLoggedIn = json['isLoggedIn'];
     return MainState(
       currentRoute: currentRoute,
       sideMenu: sideMenu,
       selectedIndex: selectedIndex,
+      isLoggedIn: isLoggedIn,
     );
   }
 
@@ -63,5 +66,6 @@ class MainCubit extends HydratedCubit<MainState> {
   Map<String, dynamic>? toJson(MainState state) => {
         'selectedIndex': state.selectedIndex,
         'currentRoute': state.currentRoute.route,
+        'isLoggedIn': state.isLoggedIn,
       };
 }
