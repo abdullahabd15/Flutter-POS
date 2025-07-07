@@ -36,8 +36,10 @@ class MyApp extends StatelessWidget {
       future: _isLoggedIn(),
       builder: (context, snapshot) {
         return BlocProvider(
-          create: (_) => MainCubit(isLoggedIn: snapshot.data == true)
-            ..checkAndSyncLoginStatus(),
+          create: (_) =>
+              MainCubit(logoutUseCase: sl(), isLoggedIn: snapshot.data == true)
+                ..checkAndSyncLoginStatus()
+                ..setupCurrentDate(),
           child: BlocBuilder<MainCubit, MainState>(
             builder: (context, state) {
               return MaterialApp.router(
@@ -54,7 +56,7 @@ class MyApp extends StatelessWidget {
 
   Future<bool> _isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = await prefs.getToken();
+    final token = prefs.getToken();
     return token != null && token.isNotEmpty ? true : false;
   }
 
@@ -67,10 +69,10 @@ class MyApp extends StatelessWidget {
               child: BlocProvider(
                 create: (_) => LoginCubit(loginUseCase: sl()),
                 child: LoginScreen(
-                  onLoginSuccess: () {
-                    context
-                        .read<MainCubit>()
-                        .setCurrentRoute(Routes.home.route);
+                  onLoginSuccess: (user) {
+                    context.read<MainCubit>()
+                      ..setUser(user)
+                      ..setCurrentRoute(Routes.home.route);
                     GoRouter.of(context).go(Routes.home.route);
                   },
                 ),

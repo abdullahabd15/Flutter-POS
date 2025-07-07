@@ -30,7 +30,13 @@ abstract class PosRepository {
     String? toDate,
   });
 
+  Future<Either<FailureResponse, ProductCategory?>> addCategory(String name);
+
+  Future<Either<FailureResponse, ProductCategory?>> editCategory(int? id, String name);
+
+  Future<Either<FailureResponse, String?>> deleteCategory(int? id);
+
   Future<Either<FailureResponse, LoginResult>> login(String username, String password);
 
-  Future<Either<FailureResponse, ApiResponse<Object>>> logout();
+  Future<Either<FailureResponse, ApiResponse<dynamic>>> logout();
 }

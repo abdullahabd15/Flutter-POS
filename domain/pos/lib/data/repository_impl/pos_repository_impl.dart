@@ -141,7 +141,53 @@ class PosRepositoryImpl extends PosRepository {
   }
 
   @override
-  Future<Either<FailureResponse, LoginResult>> login(String username, String password) async {
+  Future<Either<FailureResponse, ProductCategory?>> addCategory(String name) async {
+    try {
+      final result = await posDataSource.addCategory(name);
+      if (result.success == true) {
+        return Right(result.data);
+      } else {
+        return const Left(FailureResponse(message: 'Something went wrong'));
+      }
+    } catch (e) {
+      return Left(FailureResponse(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<FailureResponse, ProductCategory?>> editCategory(
+    int? id,
+    String name,
+  ) async {
+    try {
+      final result = await posDataSource.editCategory(id, name);
+      if (result.success == true) {
+        return Right(result.data);
+      } else {
+        return const Left(FailureResponse(message: 'Something went wrong'));
+      }
+    } catch (e) {
+      return Left(FailureResponse(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<FailureResponse, String?>> deleteCategory(int? id) async {
+    try {
+      final result = await posDataSource.deleteCategory(id);
+      if (result.success == true) {
+        return Right(result.data);
+      } else {
+        return const Left(FailureResponse(message: 'Something went wrong'));
+      }
+    } catch (e) {
+      return Left(FailureResponse(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<FailureResponse, LoginResult>> login(
+      String username, String password) async {
     try {
       final result = await posDataSource.login(username, password);
       if (result.success == true) {
@@ -157,10 +203,10 @@ class PosRepositoryImpl extends PosRepository {
   }
 
   @override
-  Future<Either<FailureResponse, ApiResponse<Object>>> logout() async {
+  Future<Either<FailureResponse, ApiResponse<dynamic>>> logout() async {
     try {
       final result = await posDataSource.logout();
-      if (result.success == true && result.data != null) {
+      if (result.success == true) {
         return Right(result);
       } else {
         return const Left(FailureResponse(message: 'Something went wrong'));

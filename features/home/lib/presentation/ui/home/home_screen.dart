@@ -2,6 +2,7 @@ import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:home/presentation/cubit/cart/cart_cubit.dart';
+import 'package:home/presentation/cubit/category/category_cubit.dart';
 import 'package:home/presentation/cubit/products/products_cubit.dart';
 import 'package:home/presentation/ui/home/home_left_side.dart';
 import 'package:home/presentation/ui/home/home_right_side.dart';
@@ -14,10 +15,17 @@ class HomeScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
+          create: (_) => CategoryCubit(
+            fetchProductCategoriesUseCase: sl(),
+            addCategoryUseCase: sl(),
+            editCategoryUseCase: sl(),
+            deleteCategoryUseCase: sl(),
+          )..fetchProductsCategories(),
+        ),
+        BlocProvider(
           create: (_) => ProductCubit(
             fetchProductUseCase: sl(),
-            fetchProductCategoriesUseCase: sl(),
-          ),
+          )..fetchProducts(),
         ),
         BlocProvider(
           create: (_) => CartCubit(
@@ -31,7 +39,10 @@ class HomeScreen extends StatelessWidget {
       child: const Scaffold(
         backgroundColor: Color(0xFFF6F8FB),
         body: Row(
-          children: [HomeLeftSide(), HomeRightSide()],
+          children: [
+            HomeLeftSide(),
+            HomeRightSide(),
+          ],
         ),
       ),
     );

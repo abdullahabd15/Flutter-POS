@@ -28,7 +28,7 @@ class ProductCategoryList extends StatelessWidget {
             elevation: 1,
             borderRadius: BorderRadius.circular(50),
             child: BlocSelector<ProductCubit, ProductState, String?>(
-                selector: (state) => state.selectedCategory,
+                selector: (state) => "",
                 builder: (context, selectedCategoryName) {
                   return Container(
                     decoration: BoxDecoration(

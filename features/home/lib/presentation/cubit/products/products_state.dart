@@ -5,30 +5,30 @@ import 'package:pos/data/models/product_category.dart';
 class ProductState extends Equatable {
   final List<Product> allProducts;
   final List<Product> products;
-  final List<ProductCategory> categories;
-  final String? selectedCategory;
+  final String? errorMessage;
 
   const ProductState({
     required this.allProducts,
     required this.products,
-    required this.categories,
-    this.selectedCategory,
+    this.errorMessage,
   });
 
   ProductState copyWith({
     List<Product>? allProducts,
     List<Product>? products,
-    List<ProductCategory>? categories,
-    String? selectedCategory,
+    String? errorMessage,
   }) {
     return ProductState(
       allProducts: allProducts ?? this.allProducts,
       products: products ?? this.products,
-      categories: categories ?? this.categories,
-      selectedCategory: selectedCategory ?? this.selectedCategory,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [products, categories];
+  List<Object?> get props => [
+        products,
+        errorMessage,
+        allProducts,
+      ];
 }

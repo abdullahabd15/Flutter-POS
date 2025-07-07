@@ -2,12 +2,13 @@ import 'package:auth/presentation/cubit/login/login_cubit.dart';
 import 'package:auth/presentation/cubit/login/login_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:pos/data/models/user.dart';
 
 class LoginScreen extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final Function onLoginSuccess;
+  final Function(User?) onLoginSuccess;
 
   LoginScreen({required this.onLoginSuccess, super.key});
 
@@ -25,7 +26,7 @@ class LoginScreen extends StatelessWidget {
       body: BlocListener<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state.status == LoginStatus.success) {
-            onLoginSuccess();
+            onLoginSuccess(state.loginResult?.user);
           }
         },
         child: BlocBuilder<LoginCubit, LoginState>(

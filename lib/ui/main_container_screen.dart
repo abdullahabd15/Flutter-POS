@@ -1,20 +1,28 @@
 import 'package:dependencies/bloc/bloc.dart';
+import 'package:dependencies/go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/cubit/main_cubit.dart';
 import 'package:flutter_pos/cubit/main_state.dart';
+import 'package:home/presentation/components/header.dart';
 import 'package:home/presentation/ui/home/home_screen.dart';
 import 'package:home/presentation/ui/productmanagement/product_management_screen.dart';
+import 'package:resources/enum/routes.dart';
 
 class MainContainerScreen extends StatelessWidget {
   const MainContainerScreen({super.key});
 
   Widget _buildChild(int index) {
     switch (index) {
-      case 0: return const HomeScreen();
-      case 1: return Container();
-      case 2: return Container();
-      case 3: return const ProductManagementScreen();
-      default: return const HomeScreen();
+      case 0:
+        return const HomeScreen();
+      case 1:
+        return Container();
+      case 2:
+        return Container();
+      case 3:
+        return ProductManagementScreen();
+      default:
+        return const HomeScreen();
     }
   }
 
@@ -22,25 +30,16 @@ class MainContainerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<MainCubit, MainState>(
       listener: (context, state) {
-        // switch (state.selectedIndex) {
-        //   case 0:
-        //     context.read<MainCubit>().setCurrentChild(const HomeScreen());
-        //     break;
-        //   case 1:
-        //     context.read<MainCubit>().setCurrentChild(Container());
-        //     break;
-        //   case 2:
-        //     context.read<MainCubit>().setCurrentChild(Container());
-        //     break;
-        //   case 3:
-        //     context
-        //         .read<MainCubit>()
-        //         .setCurrentChild(const ProductManagementScreen());
-        //     break;
-        //   default:
-        //     context.read<MainCubit>().setCurrentChild(const HomeScreen());
-        //     break;
-        // }
+        if (state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage ?? ''),
+            ),
+          );
+        }
+        if (state.isLoggedIn == false) {
+          GoRouter.of(context).go(Routes.login.route);
+        }
       },
       child: BlocBuilder<MainCubit, MainState>(
         builder: (context, state) {
@@ -75,7 +74,26 @@ class MainContainerScreen extends StatelessWidget {
                         .toList(),
                   ),
                 ),
-                Expanded(child: _buildChild(state.selectedIndex)),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: Header(
+                          currentDate: state.currentDate,
+                          user: state.user,
+                          onLogout: () {
+                            context.read<MainCubit>().logout();
+                          },
+                        ),
+                      ),
+                      Expanded(child: _buildChild(state.selectedIndex)),
+                    ],
+                  ),
+                ),
               ],
             ),
           );

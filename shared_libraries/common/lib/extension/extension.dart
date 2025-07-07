@@ -26,7 +26,11 @@ extension SharedPreferencesExtension on SharedPreferences {
     await setString('token', value);
   }
 
-  Future<String?> getToken() async {
+  String? getToken() {
     return getString('token');
+  }
+
+  Future<void> removeToken() async {
+    await remove('token');
   }
 }

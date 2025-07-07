@@ -8,6 +8,6 @@ class LogoutUseCase {
 
   const LogoutUseCase({required this.repository});
 
-  Future<Either<FailureResponse, ApiResponse<Object>>> execute() =>
+  Future<Either<FailureResponse, ApiResponse<dynamic>>> execute() =>
       repository.logout();
 }

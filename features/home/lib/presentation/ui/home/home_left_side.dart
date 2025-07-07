@@ -1,6 +1,8 @@
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:home/presentation/cubit/cart/cart_cubit.dart';
+import 'package:home/presentation/cubit/category/category_cubit.dart';
+import 'package:home/presentation/cubit/category/category_state.dart';
 import 'package:home/presentation/cubit/products/products_cubit.dart';
 import 'package:home/presentation/cubit/products/products_state.dart';
 
@@ -9,48 +11,31 @@ class HomeLeftSide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productCubit = context.read<ProductCubit>();
-    final cartCubit = context.read<CartCubit>();
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'POS App',
-                      style: TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
+            Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 400,
+                child: TextField(
+                  onChanged: null,
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    Text(
-                      'Wednesday, 28 May 2025',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 300,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search...',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 16),
-                    ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                   ),
                 ),
-              ],
+              ),
             ),
             const SizedBox(height: 16),
-            BlocBuilder<ProductCubit, ProductState>(
+            BlocBuilder<CategoryCubit, CategoryState>(
               builder: (context, state) {
                 final categories = state.categories;
                 return SizedBox(
@@ -58,8 +43,7 @@ class HomeLeftSide extends StatelessWidget {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: categories.length + 1,
-                    separatorBuilder: (_, __) =>
-                    const SizedBox(width: 8),
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return FilterChip(
@@ -67,17 +51,16 @@ class HomeLeftSide extends StatelessWidget {
                           selected: state.selectedCategory == null,
                           onSelected: (_) => context
                               .read<ProductCubit>()
-                              .setSelectedCategory(null),
+                              .onCategorySelected(null),
                         );
                       }
                       final category = categories[index - 1];
                       return FilterChip(
                         label: Text(category.name ?? ''),
-                        selected:
-                        state.selectedCategory == category.name,
+                        selected: state.selectedCategory == category.name,
                         onSelected: (_) => context
                             .read<ProductCubit>()
-                            .setSelectedCategory(category.name),
+                            .onCategorySelected(category.name),
                       );
                     },
                   ),
@@ -91,7 +74,7 @@ class HomeLeftSide extends StatelessWidget {
                   final products = state.products;
                   return GridView.builder(
                     gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       childAspectRatio: 4 / 5,
                       crossAxisSpacing: 16,
@@ -107,16 +90,14 @@ class HomeLeftSide extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.stretch,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Expanded(
                                 child: Image.network(
                                   product.imagePath ?? '',
                                   fit: BoxFit.contain,
                                   errorBuilder: (_, __, ___) =>
-                                  const Icon(Icons.fastfood,
-                                      size: 48),
+                                      const Icon(Icons.fastfood, size: 48),
                                 ),
                               ),
                               const SizedBox(height: 8),
