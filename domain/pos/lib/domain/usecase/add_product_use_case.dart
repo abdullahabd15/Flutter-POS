@@ -1,14 +1,14 @@
 import 'package:common/error/failure_response.dart';
 import 'package:dependencies/dartz/dartz.dart';
 import 'package:pos/data/models/product.dart';
-import 'package:pos/domain/repositories/pos_repository.dart';
+import 'package:pos/data/models/product_body.dart';
 import 'package:pos/domain/repositories/product_repository.dart';
 
-class FetchProductsUseCase {
+class AddProductUseCase {
   final ProductRepository repository;
 
-  const FetchProductsUseCase({required this.repository});
+  AddProductUseCase({required this.repository});
 
-  Future<Either<FailureResponse, List<Product>>> execute() async =>
-      repository.fetchProducts();
+  Future<Either<FailureResponse, Product?>> execute(ProductBody product) =>
+      repository.addProduct(product);
 }

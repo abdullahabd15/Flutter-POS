@@ -1,12 +1,23 @@
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:home/presentation/cubit/products/products_state.dart';
+import 'package:pos/data/models/product.dart';
+import 'package:pos/data/models/product_body.dart';
 import 'package:pos/domain/usecase/fetch_products_use_case.dart';
+import 'package:pos/domain/usecase/add_product_use_case.dart';
+import 'package:pos/domain/usecase/edit_product_use_case.dart';
+import 'package:pos/domain/usecase/delete_product_use_case.dart';
 
 class ProductCubit extends Cubit<ProductState> {
   final FetchProductsUseCase fetchProductUseCase;
+  final AddProductUseCase addProductUseCase;
+  final EditProductUseCase editProductUseCase;
+  final DeleteProductUseCase deleteProductUseCase;
 
   ProductCubit({
     required this.fetchProductUseCase,
+    required this.addProductUseCase,
+    required this.editProductUseCase,
+    required this.deleteProductUseCase,
   }) : super(
           const ProductState(
             allProducts: [],
@@ -22,6 +33,30 @@ class ProductCubit extends Cubit<ProductState> {
         products: data,
         allProducts: data,
       )),
+    );
+  }
+
+  Future<void> addProduct(ProductBody product) async {
+    final result = await addProductUseCase.execute(product);
+    result.fold(
+      (failure) => emit(state),
+      (data) => emit(state.copyWith()),
+    );
+  }
+
+  Future<void> editProduct(Product product) async {
+    final result = await editProductUseCase.execute(product);
+    result.fold(
+      (failure) => emit(state),
+      (data) => emit(state.copyWith()),
+    );
+  }
+
+  Future<void> deleteProduct(int? productId) async {
+    final result = await deleteProductUseCase.execute(productId);
+    result.fold(
+      (failure) => emit(state),
+      (data) => emit(state.copyWith()),
     );
   }
 

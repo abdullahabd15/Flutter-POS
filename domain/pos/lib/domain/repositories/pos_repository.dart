@@ -10,10 +10,6 @@ import '../../data/models/product.dart';
 import '../../data/models/product_category.dart';
 
 abstract class PosRepository {
-  Future<Either<FailureResponse, List<ProductCategory>>>
-      fetchProductCategories();
-
-  Future<Either<FailureResponse, List<Product>>> fetchProducts();
 
   Future<Either<FailureResponse, Cart>> fetchShoppingCart();
 
@@ -29,14 +25,4 @@ abstract class PosRepository {
     String? fromDate,
     String? toDate,
   });
-
-  Future<Either<FailureResponse, ProductCategory?>> addCategory(String name);
-
-  Future<Either<FailureResponse, ProductCategory?>> editCategory(int? id, String name);
-
-  Future<Either<FailureResponse, String?>> deleteCategory(int? id);
-
-  Future<Either<FailureResponse, LoginResult>> login(String username, String password);
-
-  Future<Either<FailureResponse, ApiResponse<dynamic>>> logout();
 }

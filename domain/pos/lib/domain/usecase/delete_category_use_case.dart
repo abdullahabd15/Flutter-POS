@@ -1,9 +1,10 @@
 import 'package:common/error/failure_response.dart';
 import 'package:dependencies/dartz/dartz.dart';
+import 'package:pos/domain/repositories/category_repository.dart';
 import 'package:pos/domain/repositories/pos_repository.dart';
 
 class DeleteCategoryUseCase {
-  final PosRepository repository;
+  final CategoryRepository repository;
 
   DeleteCategoryUseCase({required this.repository});
 

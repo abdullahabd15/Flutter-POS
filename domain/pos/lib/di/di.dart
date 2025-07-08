@@ -1,15 +1,27 @@
 import 'package:dependencies/get_it/get_it.dart';
 import 'package:dependencies/shared_preferences/shared_preferences.dart';
+import 'package:pos/data/datasources/auth_data_source.dart';
+import 'package:pos/data/datasources/category_data_source.dart';
 import 'package:pos/data/datasources/pos_data_source.dart';
+import 'package:pos/data/datasources/product_data_source.dart';
+import 'package:pos/data/repository_impl/auth_repository_impl.dart';
+import 'package:pos/data/repository_impl/category_repository_impl.dart';
 import 'package:pos/data/repository_impl/pos_repository_impl.dart';
+import 'package:pos/data/repository_impl/product_repository_impl.dart';
+import 'package:pos/domain/repositories/auth_repository.dart';
+import 'package:pos/domain/repositories/category_repository.dart';
 import 'package:pos/domain/repositories/pos_repository.dart';
+import 'package:pos/domain/repositories/product_repository.dart';
 import 'package:pos/domain/usecase/add_category_use_case.dart';
 import 'package:pos/domain/usecase/add_item_cart_use_case.dart';
+import 'package:pos/domain/usecase/add_product_use_case.dart';
 import 'package:pos/domain/usecase/checkout_use_case.dart';
 import 'package:pos/domain/usecase/clear_items_cart_use_case.dart';
 import 'package:pos/domain/usecase/delete_category_use_case.dart';
 import 'package:pos/domain/usecase/delete_item_cart_use_case.dart';
+import 'package:pos/domain/usecase/delete_product_use_case.dart';
 import 'package:pos/domain/usecase/edit_category_use_case.dart';
+import 'package:pos/domain/usecase/edit_product_use_case.dart';
 import 'package:pos/domain/usecase/fetch_product_categories_use_case.dart';
 import 'package:pos/domain/usecase/fetch_products_use_case.dart';
 import 'package:pos/domain/usecase/fetch_shopping_cart_use_case.dart';
@@ -22,21 +34,38 @@ class PosModule {
     _registerPosModule();
   }
 
-  void _registerPosModule() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    sl.registerLazySingleton<PosDataSource>(
-        () => PosDataSourceImpl(prefs: prefs, dio: sl()));
-
+  void _registerRepository() {
     sl.registerLazySingleton<PosRepository>(
         () => PosRepositoryImpl(posDataSource: sl()));
+    sl.registerLazySingleton<AuthRepository>(
+        () => AuthRepositoryImpl(authDataSource: sl()));
+    sl.registerLazySingleton<CategoryRepository>(
+        () => CategoryRepositoryImpl(categoryDataSource: sl()));
+    sl.registerLazySingleton<ProductRepository>(
+        () => ProductRepositoryImpl(productDataSource: sl()));
+  }
 
+  void _registerDataSource(SharedPreferences prefs) {
+    sl.registerLazySingleton<PosDataSource>(
+        () => PosDataSourceImpl(prefs: prefs, dio: sl()));
+    sl.registerLazySingleton<AuthDataSource>(
+        () => AuthDataSourceImpl(prefs: prefs, dio: sl()));
+    sl.registerLazySingleton<CategoryDataSource>(
+        () => CategoryDataSourceImpl(prefs: prefs, dio: sl()));
+    sl.registerLazySingleton<ProductDataSource>(
+        () => ProductDataSourceImpl(prefs: prefs, dio: sl()));
+  }
+
+  void _registerUseCase() {
     sl.registerLazySingleton(() => AddItemCartUseCase(repository: sl()));
     sl.registerLazySingleton(() => ClearItemsCartUseCase(repository: sl()));
     sl.registerLazySingleton(() => DeleteItemCartUseCase(repository: sl()));
     sl.registerLazySingleton(
         () => FetchProductCategoriesUseCase(repository: sl()));
     sl.registerLazySingleton(() => FetchProductsUseCase(repository: sl()));
+    sl.registerLazySingleton(() => AddProductUseCase(repository: sl()));
+    sl.registerLazySingleton(() => EditProductUseCase(repository: sl()));
+    sl.registerLazySingleton(() => DeleteProductUseCase(repository: sl()));
     sl.registerLazySingleton(() => FetchShoppingCartUseCase(repository: sl()));
     sl.registerLazySingleton(() => CheckoutUseCase(repository: sl()));
     sl.registerLazySingleton(
@@ -46,5 +75,13 @@ class PosModule {
     sl.registerLazySingleton(() => DeleteCategoryUseCase(repository: sl()));
     sl.registerLazySingleton(() => LoginUseCase(repository: sl()));
     sl.registerLazySingleton(() => LogoutUseCase(repository: sl()));
+  }
+
+  void _registerPosModule() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    _registerDataSource(prefs);
+    _registerRepository();
+    _registerUseCase();
   }
 }

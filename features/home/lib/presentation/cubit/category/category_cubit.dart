@@ -53,4 +53,8 @@ class CategoryCubit extends Cubit<CategoryState> {
       (data) => emit(state.copyWith(categories: List.of(data))),
     );
   }
+
+  void setSelectedCategory(String? categoryName) {
+    emit(state.copyWith(selectedCategory: categoryName));
+  }
 }

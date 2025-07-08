@@ -25,6 +25,9 @@ class HomeScreen extends StatelessWidget {
         BlocProvider(
           create: (_) => ProductCubit(
             fetchProductUseCase: sl(),
+            addProductUseCase: sl(),
+            editProductUseCase: sl(),
+            deleteProductUseCase: sl(),
           )..fetchProducts(),
         ),
         BlocProvider(
