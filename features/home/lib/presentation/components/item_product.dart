@@ -40,7 +40,7 @@ class ItemProduct extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    '${ApiConstant.baseUrl}/${data.imagePath}',
+                    '${ApiConstant.baseUrl}/${data.imageName}',
                     fit: BoxFit.contain,
                   ),
                 ),

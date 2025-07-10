@@ -10,7 +10,7 @@ class Product {
   final double? price;
   final int? stock;
   final String? description;
-  final String? imagePath;
+  final String? imageName;
 
   Product({
     required this.id,
@@ -19,7 +19,7 @@ class Product {
     required this.price,
     required this.stock,
     required this.description,
-    required this.imagePath,
+    required this.imageName,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) =>

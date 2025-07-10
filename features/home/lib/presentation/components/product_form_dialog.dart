@@ -1,26 +1,35 @@
+import 'package:common/enums/input_mode.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/get_it/get_it.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:home/presentation/cubit/productform/product_form_cubit.dart';
 import 'package:home/presentation/cubit/productform/product_form_state.dart';
 import 'package:pos/data/models/product_body.dart';
 import 'package:pos/data/models/product_category.dart';
+import 'package:core/network/api_constant.dart';
 
-class AddProductDialog extends StatelessWidget {
+class ProductFormDialog extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController priceController;
   final TextEditingController stockController;
+  final String? imageUrl;
+  final String? category;
   final VoidCallback onCancel;
-  final Function(ProductBody) onAdd;
+  final Function(ProductBody) onSave;
+  final InputMode mode;
 
-  const AddProductDialog({
+  const ProductFormDialog({
     super.key,
     required this.nameController,
     required this.priceController,
     required this.stockController,
+    required this.imageUrl,
+    required this.category,
     required this.onCancel,
-    required this.onAdd,
+    required this.onSave,
+    this.mode = InputMode.add,
   });
 
   @override
@@ -28,7 +37,12 @@ class AddProductDialog extends StatelessWidget {
     return BlocProvider(
       create: (_) => ProductFormCubit(
         fetchProductCategoriesUseCase: sl(),
-      )..fetchCategories(),
+      )
+        ..fetchCategories()
+        ..setName(nameController.text)
+        ..setPrice(priceController.text)
+        ..setStock(stockController.text)
+        ..setCategory(category),
       child: Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: BlocBuilder<ProductFormCubit, ProductFormState>(
@@ -43,10 +57,12 @@ class AddProductDialog extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Add Product',
-                          style: TextStyle(
+                          mode == InputMode.add
+                              ? 'Add Product'
+                              : 'Edit Product',
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -57,6 +73,33 @@ class AddProductDialog extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        context.read<ProductFormCubit>().pickImage();
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundColor: state.image != null || imageUrl != null
+                            ? Colors.transparent
+                            : Colors.grey[200],
+                        backgroundImage: imageUrl != null && state.image == null
+                            ? NetworkImage(
+                                '${ApiConstant.baseUrlImage}$imageUrl',
+                              )
+                            : state.image != null && state.imageBytes != null
+                                ? kIsWeb
+                                    ? MemoryImage(state.imageBytes!)
+                                    : FileImage(state.image!)
+                                : null,
+                        child: state.image == null && imageUrl == null
+                            ? const Icon(Icons.image,
+                                size: 40, color: Colors.grey)
+                            : null,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   const Text('Product Name',
                       style: TextStyle(fontWeight: FontWeight.w500)),
                   const SizedBox(height: 8),
@@ -159,6 +202,9 @@ class AddProductDialog extends StatelessWidget {
                             backgroundColor: const Color(0xFFF6F8FB),
                             foregroundColor: Colors.black87,
                             side: BorderSide.none,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                           onPressed: onCancel,
                           child: const Text('Cancel'),
@@ -181,11 +227,14 @@ class AddProductDialog extends StatelessWidget {
                                 category: state.category,
                                 price: double.parse(state.price),
                                 stock: int.parse(state.stock),
+                                image: state.imageBytes,
+                                imageName: state.imageName,
                               );
-                              onAdd(product);
+                              onSave(product);
                             }
                           },
-                          child: const Text('Add Product'),
+                          child: Text(
+                              mode == InputMode.add ? 'Add Product' : 'Save'),
                         ),
                       ),
                     ],

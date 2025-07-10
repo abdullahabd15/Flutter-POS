@@ -3,13 +3,12 @@ import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/get_it/get_it.dart';
 import 'package:dependencies/go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import 'package:home/presentation/components/add_product_dialog.dart';
+import 'package:home/presentation/components/product_form_dialog.dart';
 import 'package:home/presentation/cubit/category/category_cubit.dart';
 import 'package:home/presentation/cubit/products/products_cubit.dart';
 import 'package:home/presentation/cubit/products/products_state.dart';
 import 'package:pos/data/models/product.dart';
 import 'package:pos/data/models/product_body.dart';
-import 'package:pos/data/models/product_category.dart';
 
 class ProductTable extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
@@ -34,10 +33,9 @@ class ProductTable extends StatelessWidget {
     return 'Rp ${price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}';
   }
 
-  void _showAddProductDialog(
+  void _showProductDialog(
     BuildContext context, {
-    required List<ProductCategory> categories,
-    required Function(ProductBody) onAdd,
+    required Function(ProductBody) onSave,
     InputMode mode = InputMode.add,
     Product? product,
   }) {
@@ -52,17 +50,54 @@ class ProductTable extends StatelessWidget {
     }
     showDialog(
       context: context,
-      builder: (context) => AddProductDialog(
+      builder: (context) => ProductFormDialog(
         nameController: _nameController,
         priceController: _priceController,
         stockController: _stockController,
+        imageUrl: product?.imageName,
+        category: product?.category,
+        mode: mode,
         onCancel: () {
           GoRouter.of(context).pop();
         },
-        onAdd: (product) {
-          onAdd(product);
+        onSave: (product) {
+          onSave(product);
           GoRouter.of(context).pop();
         },
+      ),
+    );
+  }
+
+  void _showDeleteProductDialog(
+    BuildContext context, {
+    required Function onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Product'),
+        content: const Text('Are you sure you want to delete this product?'),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.black,
+            ),
+            onPressed: () {
+              GoRouter.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            onPressed: () {
+              onConfirm();
+              GoRouter.of(context).pop();
+            },
+            child: const Text('Delete'),
+          ),
+        ],
       ),
     );
   }
@@ -106,12 +141,11 @@ class ProductTable extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      _showAddProductDialog(
+                      _showProductDialog(
                         context,
-                        onAdd: (product) {
+                        onSave: (product) {
                           context.read<ProductCubit>().addProduct(product);
                         },
-                        categories: [],
                       );
                     },
                     icon: const Icon(Icons.add),
@@ -185,12 +219,32 @@ class ProductTable extends StatelessWidget {
                               IconButton(
                                 icon:
                                     const Icon(Icons.edit, color: Colors.blue),
-                                onPressed: () {},
+                                onPressed: () {
+                                  _showProductDialog(
+                                    context,
+                                    mode: InputMode.edit,
+                                    product: product,
+                                    onSave: (value) {
+                                      context
+                                          .read<ProductCubit>()
+                                          .editProduct(product.id, value);
+                                    },
+                                  );
+                                },
                               ),
                               IconButton(
                                 icon:
                                     const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () {},
+                                onPressed: () {
+                                  _showDeleteProductDialog(
+                                    context,
+                                    onConfirm: () {
+                                      context
+                                          .read<ProductCubit>()
+                                          .deleteProduct(product.id);
+                                    },
+                                  );
+                                },
                               ),
                             ],
                           )),

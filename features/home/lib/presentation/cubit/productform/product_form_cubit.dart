@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:dependencies/bloc/bloc.dart';
+import 'package:dependencies/image_picker/image_picker.dart';
 import 'package:home/presentation/cubit/productform/product_form_state.dart';
 import 'package:pos/domain/usecase/fetch_product_categories_use_case.dart';
 
@@ -26,6 +29,20 @@ class ProductFormCubit extends Cubit<ProductFormState> {
       (failure) => emit(state.copyWith(categoryError: failure.message)),
       (data) => emit(state.copyWith(categories: List.of(data))),
     );
+  }
+
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final imageFile = File(image.path);
+      final imageBytes = await XFile(image.path).readAsBytes();
+      emit(state.copyWith(
+        image: imageFile,
+        imageBytes: imageBytes,
+        imageName: image.name,
+      ));
+    }
   }
 
   bool validate() {

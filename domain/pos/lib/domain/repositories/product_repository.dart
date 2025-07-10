@@ -8,7 +8,7 @@ abstract class ProductRepository {
 
   Future<Either<FailureResponse, Product?>> addProduct(ProductBody product);
 
-  Future<Either<FailureResponse, Product?>> editProduct(Product product);
+  Future<Either<FailureResponse, Product?>> editProduct(int? id, ProductBody product);
 
   Future<Either<FailureResponse, String?>> deleteProduct(int? id);
 }

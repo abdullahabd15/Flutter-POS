@@ -12,4 +12,7 @@ Map<String, dynamic> _$ProductBodyToJson(ProductBody instance) =>
       'category': instance.category,
       'price': instance.price,
       'stock': instance.stock,
+      'image': instance.image,
+      'image_name': instance.imageName,
+      'description': instance.description,
     };

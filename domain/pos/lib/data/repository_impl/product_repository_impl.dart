@@ -44,7 +44,7 @@ class ProductRepositoryImpl extends ProductRepository {
     try {
       final result = await productDataSource.deleteProduct(id);
       if (result.success == true) {
-        return Right(result.data!);
+        return Right(result.data);
       } else {
         return const Left(FailureResponse(message: 'Something went wrong'));
       }
@@ -54,9 +54,12 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  Future<Either<FailureResponse, Product?>> editProduct(Product product) async {
+  Future<Either<FailureResponse, Product?>> editProduct(
+    int? id,
+    ProductBody product,
+  ) async {
     try {
-      final result = await productDataSource.editProduct(product);
+      final result = await productDataSource.editProduct(id, product);
       if (result.success == true && result.data != null) {
         return Right(result.data!);
       } else {

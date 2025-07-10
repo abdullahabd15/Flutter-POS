@@ -94,7 +94,7 @@ class HomeLeftSide extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Image.network(
-                                  product.imagePath ?? '',
+                                  product.imageName ?? '',
                                   fit: BoxFit.contain,
                                   errorBuilder: (_, __, ___) =>
                                       const Icon(Icons.fastfood, size: 48),

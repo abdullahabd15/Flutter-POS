@@ -10,7 +10,7 @@ abstract class ProductDataSource {
 
   Future<ApiResponse<Product?>> addProduct(ProductBody product);
 
-  Future<ApiResponse<Product?>> editProduct(Product product);
+  Future<ApiResponse<Product?>> editProduct(int? id, ProductBody product);
 
   Future<ApiResponse<String?>> deleteProduct(int? id);
 }
@@ -47,10 +47,23 @@ class ProductDataSourceImpl extends ProductDataSource {
   @override
   Future<ApiResponse<Product?>> addProduct(ProductBody product) async {
     try {
-      final response = await dio.post(
+      final formData = FormData.fromMap({
+        'name': product.name,
+        'category': product.category,
+        'price': product.price,
+        'stock': product.stock,
+        if (product.image != null)
+          'image': MultipartFile.fromBytes(
+            product.image!,
+            filename: product.imageName,
+            contentType: DioMediaType('image', 'png'),
+          ),
+      });
+      final customDio = dio..interceptors.clear();
+      final response = await customDio.post(
         '/products',
-        data: product.toJson(),
-        options: _options(),
+        data: formData,
+        options: _options()..contentType = 'multipart/form-data',
       );
       return ApiResponse.fromJson(
         response.data,
@@ -78,12 +91,29 @@ class ProductDataSourceImpl extends ProductDataSource {
   }
 
   @override
-  Future<ApiResponse<Product?>> editProduct(Product product) async {
+  Future<ApiResponse<Product?>> editProduct(
+    int? id,
+    ProductBody product,
+  ) async {
     try {
-      final response = await dio.put(
-        '/products/${product.id}',
-        data: product.toJson(),
-        options: _options(),
+      final formData = FormData.fromMap({
+        '_method': 'PUT',
+        'name': product.name,
+        'category': product.category,
+        'price': product.price,
+        'stock': product.stock,
+        if (product.image != null)
+          'image': MultipartFile.fromBytes(
+            product.image!,
+            filename: product.imageName,
+            contentType: DioMediaType('image', 'png'),
+          ),
+      });
+      final customDio = dio..interceptors.clear();
+      final response = await customDio.post(
+        '/products/$id',
+        data: formData,
+        options: _options()..contentType = 'multipart/form-data',
       );
       return ApiResponse.fromJson(
         response.data,
