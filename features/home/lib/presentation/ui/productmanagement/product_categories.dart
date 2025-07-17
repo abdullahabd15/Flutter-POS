@@ -33,7 +33,10 @@ class ProductCategories extends StatelessWidget {
               onConfirm();
               GoRouter.of(context).pop();
             },
-            child: const Text('Delete'),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Colors.redAccent),
+            ),
           ),
         ],
       ),
@@ -42,9 +45,9 @@ class ProductCategories extends StatelessWidget {
 
   void _showDialogCategory(
     BuildContext context, {
-    required Function(String) onConfirm,
     InputMode mode = InputMode.add,
     String? value,
+    int? categoryId,
   }) {
     if (mode == InputMode.edit) {
       _categoryController.text = value ?? '';
@@ -58,11 +61,11 @@ class ProductCategories extends StatelessWidget {
         onCancel: () {
           GoRouter.of(context).pop();
         },
-        onAdd: () {
-          onConfirm(_categoryController.text);
+        onSaveSuccess: () {
           GoRouter.of(context).pop();
         },
         inputMode: mode,
+        categoryId: categoryId,
       ),
     );
   }
@@ -72,8 +75,6 @@ class ProductCategories extends StatelessWidget {
     return BlocProvider(
       create: (_) => CategoryCubit(
         fetchProductCategoriesUseCase: sl(),
-        addCategoryUseCase: sl(),
-        editCategoryUseCase: sl(),
         deleteCategoryUseCase: sl(),
       )..fetchProductsCategories(),
       child: BlocBuilder<CategoryCubit, CategoryState>(
@@ -92,12 +93,7 @@ class ProductCategories extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8)),
                   ),
                   onPressed: () {
-                    _showDialogCategory(
-                      context,
-                      onConfirm: (value) {
-                        context.read<CategoryCubit>().addCategory(value);
-                      },
-                    );
+                    _showDialogCategory(context);
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Add Category'),
@@ -149,23 +145,21 @@ class ProductCategories extends StatelessWidget {
                                   context,
                                   mode: InputMode.edit,
                                   value: category.name,
-                                  onConfirm: (value) {
-                                    context
-                                        .read<CategoryCubit>()
-                                        .editCategory(category.id, value);
-                                  },
+                                  categoryId: category.id,
                                 );
                               },
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
-                                _showDialogDeleteCategory(context,
-                                    onConfirm: () {
-                                  context
-                                      .read<CategoryCubit>()
-                                      .deleteCategory(category.id);
-                                });
+                                _showDialogDeleteCategory(
+                                  context,
+                                  onConfirm: () {
+                                    context
+                                        .read<CategoryCubit>()
+                                        .deleteCategory(category.id);
+                                  },
+                                );
                               },
                             ),
                           ],

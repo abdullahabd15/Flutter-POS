@@ -109,8 +109,6 @@ class ProductTable extends StatelessWidget {
         BlocProvider(
           create: (_) => CategoryCubit(
             fetchProductCategoriesUseCase: sl(),
-            addCategoryUseCase: sl(),
-            editCategoryUseCase: sl(),
             deleteCategoryUseCase: sl(),
           )..fetchProductsCategories(),
         ),
